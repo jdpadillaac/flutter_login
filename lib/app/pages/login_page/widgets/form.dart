@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_login/app/bloc/login_form_bloc.dart';
+import 'package:flutter_login/app/bloc/provider.dart';
 
 class LoginForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final bloc = BlocProvider.of(context);
 
     return SingleChildScrollView(
       child: Column(
@@ -21,8 +24,8 @@ class LoginForm extends StatelessWidget {
             child: Column(
               children: [
                 Text('Ingreso', style: TextStyle(fontSize: 20.0)),
-                _emailInput(),
-                _passwordInput(),
+                _emailInput(bloc),
+                _passwordInput(bloc),
                 _loginButon()
               ],
             ),
@@ -54,36 +57,49 @@ class LoginForm extends StatelessWidget {
     );
   }
 
-  Container _emailInput() {
-    return Container(
-      padding: EdgeInsets.only(top: 20),
-      child: TextFormField(
-        keyboardType: TextInputType.emailAddress,
-        decoration: InputDecoration(
-          prefixIcon: Icon(Icons.email),
-          hintText: 'Email',
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+  StreamBuilder _emailInput(LoginBloc bloc) {
+    return StreamBuilder(
+      stream: bloc.emailStream,
+      builder: (context, snapshot) {
+        return Container(
+          padding: EdgeInsets.only(top: 20),
+          child: TextFormField(
+            keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(
+              prefixIcon: Icon(Icons.email),
+              hintText: 'Email',
+              counterText: snapshot.data,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            onChanged: bloc.changeEmail,
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
-  Container _passwordInput() {
-    return Container(
-      padding: EdgeInsets.only(top: 20),
-      child: TextFormField(
-        obscureText: true,
-        keyboardType: TextInputType.emailAddress,
-        decoration: InputDecoration(
-          prefixIcon: Icon(Icons.lock),
-          hintText: 'Contraseña',
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+  StreamBuilder _passwordInput(LoginBloc bloc) {
+    return StreamBuilder(
+      stream: bloc.passwordStream,
+      builder: (context, snapshot) {
+        return Container(
+          padding: EdgeInsets.only(top: 20),
+          child: TextFormField(
+            obscureText: true,
+            keyboardType: TextInputType.emailAddress,
+            onChanged: bloc.changePassword,
+            decoration: InputDecoration(
+              prefixIcon: Icon(Icons.lock),
+              hintText: 'Contraseña',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
